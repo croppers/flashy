@@ -10,10 +10,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const addDeckBtn = document.getElementById('add-deck');
     const deleteDeckBtn = document.getElementById('delete-deck');
     const csvUpload = document.getElementById('csv-upload');
+    const timerDisplay = document.getElementById('timer-display');
+    const timerToggleSwitch = document.getElementById('timer-toggle-switch');
+    const nextCardBtn = document.getElementById('next-card-btn');
 
     let currentCardIndex = 0;
     let decks = {};
     let currentDeck;
+    let timerInterval;
+    let timeLeft = 10;
+    let isTimerEnabled = localStorage.getItem('isTimerEnabled') === 'true';
+    let challengingCard = null; // To store the card that timed out
 
     // --- Theme Switcher ---
     themeToggle.addEventListener('change', () => {
@@ -30,6 +37,82 @@ document.addEventListener('DOMContentLoaded', () => {
         revealAnswerBtn.style.display = 'none';
         ratingButtons.style.display = 'block';
         updateIntervalDisplays();
+        stopTimer(); // Stop timer when answer is revealed
+    });
+
+    // --- Timer Functions ---
+    function startTimer() {
+        if (!isTimerEnabled) return;
+        timeLeft = 10;
+        timerDisplay.textContent = timeLeft;
+        timerDisplay.style.display = 'block';
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timerDisplay.textContent = timeLeft;
+            if (timeLeft <= 0) {
+                stopTimer();
+                flashcard.classList.add('is-flipped'); // Reveal answer
+                revealAnswerBtn.style.display = 'none';
+                ratingButtons.style.display = 'none';
+                nextCardBtn.style.display = 'block'; // Show Next button
+                challengingCard = currentDeck.cards[currentCardIndex];
+            }
+        }, 1000);
+    }
+
+    function stopTimer() {
+        clearInterval(timerInterval);
+        timerDisplay.style.display = 'none';
+    }
+
+    function resetTimer() {
+        stopTimer();
+        if (isTimerEnabled) {
+            startTimer();
+        }
+    }
+
+    timerToggleSwitch.checked = isTimerEnabled;
+    timerToggleSwitch.addEventListener('change', () => {
+        isTimerEnabled = timerToggleSwitch.checked;
+        localStorage.setItem('isTimerEnabled', isTimerEnabled);
+        if (isTimerEnabled) {
+            startTimer();
+        } else {
+            stopTimer();
+        }
+    });
+
+    nextCardBtn.addEventListener('click', () => {
+        nextCardBtn.style.display = 'none';
+        if (challengingCard) {
+            // Find the index of the challenging card in the current deck
+            const challengingCardOriginalIndex = currentDeck.cards.indexOf(challengingCard);
+
+            // Remove the challenging card from its current position
+            currentDeck.cards.splice(challengingCardOriginalIndex, 1);
+
+            // Calculate the insertion index for the challenging card
+            let insertionIndex = currentCardIndex + 1;
+            if (insertionIndex >= currentDeck.cards.length) {
+                insertionIndex = currentDeck.cards.length; // Insert at the end if it's the last card
+            }
+
+            // Insert the challenging card after the next card
+            currentDeck.cards.splice(insertionIndex, 0, challengingCard);
+
+            // Update currentCardIndex if the insertion affected it
+            if (challengingCardOriginalIndex < currentCardIndex) {
+                currentCardIndex--; // Adjust index if card was before current
+            }
+            if (insertionIndex <= currentCardIndex) {
+                currentCardIndex++; // Adjust index if card was inserted before current
+            }
+
+            challengingCard = null; // Clear challenging card
+        }
+        currentCardIndex = getNextCard();
+        displayCard();
     });
 
     // --- Deck Management ---
@@ -94,11 +177,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 answerEl.textContent = card.answer;
                 revealAnswerBtn.style.display = 'block';
                 ratingButtons.style.display = 'none';
+                nextCardBtn.style.display = 'none'; // Hide next button
+                resetTimer(); // Reset and start timer for new card
             } else {
                 questionEl.textContent = "No cards due for review in this deck!";
                 answerEl.textContent = "";
                 revealAnswerBtn.style.display = 'none';
                 ratingButtons.style.display = 'none';
+                nextCardBtn.style.display = 'none'; // Hide next button
+                stopTimer(); // Stop timer if no cards are due
             }
         }, 250); // Wait for the flip animation to finish
     }

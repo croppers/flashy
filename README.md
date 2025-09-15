@@ -4,10 +4,11 @@ Flashy is a simple yet effective flashcard application designed to help you stud
 
 ## Core Features
 
-*   **Interactive Flashcards:** Review your cards with a clean and intuitive interface.
-*   **Spaced Repetition System (SRS):** Flashy uses a simplified SM-2 algorithm to schedule card reviews based on your performance, ensuring you focus on the material you need to learn the most.
+*   **Interactive Flashcards:** Review your cards with a clean and intuitive interface. The card flip animation has been refined to prevent premature answer revelation.
+*   **Spaced Repetition System (SRS):** Flashy uses a simplified SM-2 algorithm to schedule card reviews based on your performance, ensuring you focus on the material you need to learn the most. The next review interval is displayed for each rating option.
+*   **Customizable Rating Buttons:** Rating buttons are ordered as Easy, Medium, Hard, Again, and are color-coded for better visual distinction.
 *   **CSV Upload:** Easily import your own study decks by uploading `.csv` files.
-*   **Deck Management:** Switch between different decks, add new ones, and delete those you no longer need.
+*   **Deck Management:** Switch between different decks, add new ones, and delete those you no longer need (the default deck is protected from deletion).
 *   **Light/Dark Mode:** Study in comfort with the theme of your choice.
 *   **Local Storage:** All your decks and progress are saved directly in your browser, so you can pick up where you left off.
 
@@ -17,7 +18,8 @@ Flashy is a simple yet effective flashcard application designed to help you stud
 2.  You can start studying with the default deck right away.
 3.  To add your own deck, click the **+** button and select a `.csv` file. The CSV file should have two columns: `question,answer`.
 4.  Use the dropdown menu to switch between your decks.
-5.  To delete a deck, select it from the dropdown and click the **-** button.
+5.  To delete a deck, select it from the dropdown and click the **-** button. Note that the "Default" deck cannot be deleted.
+6.  After revealing the answer, select a rating (Easy, Medium, Hard, Again) to update the card's review schedule. The estimated next review interval will be displayed next to each button.
 
 ## Technology Stack
 
