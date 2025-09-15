@@ -13,34 +13,41 @@ This document outlines the development plan for "flashy", an interactive flash c
 - **CSV Upload:** Users can upload their own flashcard decks in a `.csv` file format.
 - **Interactive Flashcards:** The application will display one side of a flashcard (the "front" or "question") and wait for the user to reveal the other side (the "back" or "answer").
 - **Spaced Repetition:** After revealing the answer, the user can rate their recall of the card. Based on this rating, the application will schedule the next time the card should be reviewed.
+- **Optional Timer:** An optional 10-second timer will be implemented. If the timer expires before the user reveals the card, the card will automatically be categorized as "Again".
 
 ### User Interaction
 
 When a card's answer is revealed, the user will be presented with the following options to rate their performance:
 
-- **Again:** The user did not know the answer. The card should be shown again soon in the current session.
-- **Hard:** The user struggled to recall the answer.
-- **Medium:** The user recalled the answer with some effort.
 - **Easy:** The user recalled the answer effortlessly.
+- **Medium:** The user recalled the answer with some effort.
+- **Hard:** The user struggled to recall the answer.
+- **Again:** The user did not know the answer. The card should be shown again soon in the current session.
 
 ## Progress
 
 - **Initial Implementation:** The basic HTML, CSS, and JavaScript structure of the application has been created.
 - **Core Functionality:** The application now includes:
     - A default flashcard deck.
-    - Card flipping animation.
+    - Card flipping animation (fixed to prevent premature answer reveal).
     - A simplified SM-2 spaced repetition algorithm.
     - Light/dark mode theme switcher.
-    - Deck selection, creation (via CSV upload), and deletion.
-- **Testing:** The application is renderable and functional by opening the `index.html` file in a browser.
+    - Deck selection, creation (via CSV upload), and deletion (with protection for the default deck).
+    - Rating buttons reordered to Easy, Medium, Hard, Again, with color coding.
+    - Display of next review interval for each rating option.
+- **Testing:** The application is renderable and functional by opening the `index.html` file in a browser. A `test_deck.csv` file was created to verify CSV upload functionality.
 
 ## Next Steps
 
-- **Fix Card Flip Animation:** The card flip animation reveals the answer when transitioning to a new card. This needs to be fixed to ensure the user doesn't see the answer prematurely.
-- **Button Order and Color Coding:** The rating buttons should be reordered to "Easy", "Medium", "Hard", "Again" and color-coded for clarity.
-- **Display Intervals:** The interval for each rating will be displayed beneath the respective button to give the user an idea of when the card will be shown next.
-- **Custom CSV for Testing:** A custom `.csv` file will be created to test the deck upload functionality.
-- **Prevent Default Deck Deletion:** The user should not be able to delete the default deck.
+- **Implement Optional Timer (Revised Functionality):**
+    - **Display:** A numerical countdown timer will be displayed in the bottom right corner of the screen.
+    - **Control:** A toggle switch will be placed just below the timer in the bottom right corner to activate/deactivate it. The user's preference for the timer (on/off) will be saved in local storage.
+    - **Timer Expiration Behavior:**
+        1.  Immediately reveal the answer when the timer reaches zero.
+        2.  Show a single "Next" button below the answer.
+        3.  When the user clicks "Next", the challenging card (for which the timer expired) will be placed immediately after the next card in the deck.
+        4.  If the challenging card was the last card in the deck, it will simply be shown again after the user clicks "Next".
+    - **Reset:** The timer will reset and start counting down whenever a new card is presented.
 
 ## Clarifying Questions for Development
 *This section has been updated with the project's technical decisions and new clarifying questions.*
@@ -69,14 +76,10 @@ When a card's answer is revealed, the user will be presented with the following 
 - A dropdown menu to select from available decks.
 - An option to upload a new deck (`.csv`) and delete existing decks.
 - A default, pre-loaded deck.
-- The main view will show a card's question. On user interaction (e.g., a click), the answer is revealed along with the four rating buttons ("Again", "Hard", "Medium", "Easy").
-
-- The main view will show a card's question. On user interaction (e.g., a click), the answer is revealed along with the four rating buttons ("Again", "Hard", "Medium", "Easy").
+- The main view will show a card's question. On user interaction (e.g., a click), the answer is revealed along with the four rating buttons ("Easy", "Medium", "Hard", "Again").
 - The card "flip" will be a simple show/hide effect.
 - Deck management will be handled via `+` (add) and `-` (remove) buttons.
 
 
 ### 6. User Accounts
 **Decision:** This will be a single-user application. No server-side user authentication is needed.
-
-I'm ready to move on to the next phase. Let me know how you'd like to proceed!
