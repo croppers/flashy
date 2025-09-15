@@ -23,6 +23,25 @@ When a card's answer is revealed, the user will be presented with the following 
 - **Medium:** The user recalled the answer with some effort.
 - **Easy:** The user recalled the answer effortlessly.
 
+## Progress
+
+- **Initial Implementation:** The basic HTML, CSS, and JavaScript structure of the application has been created.
+- **Core Functionality:** The application now includes:
+    - A default flashcard deck.
+    - Card flipping animation.
+    - A simplified SM-2 spaced repetition algorithm.
+    - Light/dark mode theme switcher.
+    - Deck selection, creation (via CSV upload), and deletion.
+- **Testing:** The application is renderable and functional by opening the `index.html` file in a browser.
+
+## Next Steps
+
+- **Fix Card Flip Animation:** The card flip animation reveals the answer when transitioning to a new card. This needs to be fixed to ensure the user doesn't see the answer prematurely.
+- **Button Order and Color Coding:** The rating buttons should be reordered to "Easy", "Medium", "Hard", "Again" and color-coded for clarity.
+- **Display Intervals:** The interval for each rating will be displayed beneath the respective button to give the user an idea of when the card will be shown next.
+- **Custom CSV for Testing:** A custom `.csv` file will be created to test the deck upload functionality.
+- **Prevent Default Deck Deletion:** The user should not be able to delete the default deck.
+
 ## Clarifying Questions for Development
 *This section has been updated with the project's technical decisions and new clarifying questions.*
 
