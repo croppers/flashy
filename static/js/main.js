@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         flashcard.classList.add('is-flipped');
         revealAnswerBtn.style.display = 'none';
         ratingButtons.style.display = 'block';
+        updateIntervalDisplays();
     });
 
     // --- Deck Management ---
@@ -83,19 +84,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function displayCard() {
-        if (currentCardIndex !== -1) {
-            const card = currentDeck.cards[currentCardIndex];
-            questionEl.textContent = card.question;
-            answerEl.textContent = card.answer;
+        if (flashcard.classList.contains('is-flipped')) {
             flashcard.classList.remove('is-flipped');
-            revealAnswerBtn.style.display = 'block';
-            ratingButtons.style.display = 'none';
-        } else {
-            questionEl.textContent = "No cards due for review in this deck!";
-            answerEl.textContent = "";
-            revealAnswerBtn.style.display = 'none';
-            ratingButtons.style.display = 'none';
         }
+        setTimeout(() => {
+            if (currentCardIndex !== -1) {
+                const card = currentDeck.cards[currentCardIndex];
+                questionEl.textContent = card.question;
+                answerEl.textContent = card.answer;
+                revealAnswerBtn.style.display = 'block';
+                ratingButtons.style.display = 'none';
+            } else {
+                questionEl.textContent = "No cards due for review in this deck!";
+                answerEl.textContent = "";
+                revealAnswerBtn.style.display = 'none';
+                ratingButtons.style.display = 'none';
+            }
+        }, 250); // Wait for the flip animation to finish
     }
 
     deckSelect.addEventListener('change', () => {
@@ -146,7 +151,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     deleteDeckBtn.addEventListener('click', () => {
         const selectedDeck = deckSelect.value;
-        if (selectedDeck && selectedDeck !== 'Default') {
+        if (selectedDeck === 'Default') {
+            alert('The default deck cannot be deleted.');
+            return;
+        }
+        if (selectedDeck) {
             if (confirm(`Are you sure you want to delete the "${selectedDeck}" deck?`)) {
                 delete decks[selectedDeck];
                 localStorage.setItem('flashyDecks', JSON.stringify(decks));
@@ -166,6 +175,57 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             return -1; // No cards due
         }
+    }
+
+    function calculateNextInterval(card, rating) {
+        let newInterval = card.interval;
+        let newEaseFactor = card.ease_factor;
+
+        let quality = 0;
+        switch (rating) {
+            case 'again': quality = 0; break;
+            case 'hard': quality = 1; break;
+            case 'medium': quality = 2; break;
+            case 'easy': quality = 3; break;
+        }
+
+        if (quality < 2) { // Again or Hard
+            newInterval = 0;
+        } else { // Medium or Easy
+            if (newInterval === 0) {
+                newInterval = 1;
+            } else if (newInterval === 1) {
+                newInterval = 6;
+            } else {
+                newInterval = Math.round(newInterval * newEaseFactor);
+            }
+        }
+
+        newEaseFactor = newEaseFactor + (0.1 - (3 - quality) * (0.08 + (3 - quality) * 0.02));
+        if (newEaseFactor < 1.3) {
+            newEaseFactor = 1.3;
+        }
+        return newInterval;
+    }
+
+    function formatInterval(days) {
+        if (days === 0) return "<1m";
+        if (days < 1) return `${Math.round(days * 24 * 60)}m`;
+        if (days < 30) return `${Math.round(days)}d`;
+        return `${Math.round(days / 30)}mo`;
+    }
+
+    function updateIntervalDisplays() {
+        if (currentCardIndex === -1) return;
+        const card = currentDeck.cards[currentCardIndex];
+        ratingButtons.querySelectorAll('button').forEach(button => {
+            const rating = button.dataset.rating;
+            const intervalSpan = button.querySelector('.interval');
+            if (intervalSpan) {
+                const nextInterval = calculateNextInterval(card, rating);
+                intervalSpan.textContent = ` (${formatInterval(nextInterval)})`;
+            }
+        });
     }
 
     function updateCard(rating) {

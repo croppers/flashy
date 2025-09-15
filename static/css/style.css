@@ -109,3 +109,29 @@ body.dark-mode #rating-buttons button {
     background-color: #555;
     color: #f0f0f0;
 }
+
+#rating-buttons button[data-rating="easy"] {
+    background-color: #28a745;
+    color: white;
+}
+
+#rating-buttons button[data-rating="medium"] {
+    background-color: #007bff;
+    color: white;
+}
+
+#rating-buttons button[data-rating="hard"] {
+    background-color: #ffc107;
+    color: black;
+}
+
+#rating-buttons button[data-rating="again"] {
+    background-color: #dc3545;
+    color: white;
+}
+
+.interval {
+    display: block;
+    font-size: 0.7em;
+    opacity: 0.8;
+}
