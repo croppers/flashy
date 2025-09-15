@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashy</title>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="deck-controls">
+                <select id="deck-select"></select>
+                <button id="add-deck">+</button>
+                <input type="file" id="csv-upload" accept=".csv" style="display: none;">
+                <button id="delete-deck">-</button>
+            </div>
+            <div class="theme-switcher">
+                <input type="checkbox" id="theme-toggle">
+                <label for="theme-toggle">Dark Mode</label>
+            </div>
+        </div>
+        <div id="flashcard-container" class="flashcard-container">
+            <div class="flashcard">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <p id="question"></p>
+                    </div>
+                    <div class="flashcard-back">
+                        <p id="answer"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="controls" class="controls">
+            <button id="reveal-answer">Reveal Answer</button>
+            <div id="rating-buttons" style="display: none;">
+                <button data-rating="again">Again</button>
+                <button data-rating="hard">Hard</button>
+                <button data-rating="medium">Medium</button>
+                <button data-rating="easy">Easy</button>
+            </div>
+        </div>
+    </div>
+    <script src="static/js/main.js"></script>
+</body>
+</html>
